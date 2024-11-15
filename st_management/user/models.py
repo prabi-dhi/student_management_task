@@ -8,13 +8,18 @@ class User(models.Model):
 # from django.db import models
 
 # class User(AbstractUser):
-#     id = models.CharField(max_length=100, primary_key=True)
-#     password = models.CharField(max_length=30)
-#     last_login = models.CharField(max_length=100)
-#     is_superuser = models.CharField(max_length=100)
-#     username = models.CharField(max_length=100, unique=True)
-#     email = models.CharField(max_length=100)
-#     is_staff = models.CharField(max_length=100)
-#     is_active = models.CharField(max_length=100)
-#     date_joined = models.CharField(max_length=100)
+#     class Types(models.TextChoices):
+#         TEACHER = "TEACHER", "Teacher"
+#         STUDENT = "STUDENT", "Student"
+#         ADMINISTRATION = "ADMINISTRATION", 
+
+#     type = models.CharField(max_length=20, choices=Types.choices, default=Types.STUDENT)
+#     email = models.EmailField(unique=True, max_length=50)
+#     username = models.CharField(unique=True, max_length=20)
+
+#     # USERNAME_FIELD = "email"
+#     REQUIRED_FIELDS = ["username"]
+
+#     def __str__(self):
+#         return self.email
 

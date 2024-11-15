@@ -1,11 +1,90 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+      crossorigin="anonymous"
+    />
     <title>Student Management</title>
+    <style>
+      .text {
+        color: rgb(5, 5, 18);
+        font-weight: bold;
+        margin-top: -10%;
+        margin-left: 200px;
+        font-size: 30px;
+        font-family: "Times New Roman", Times, serif;
+      }
+    </style>
   </head>
   <body>
-    base
+    <div>
+      <!-- For classroom -->
+      <div>
+        {% if classrooms %}
+        <h2>Classrooms</h2>
+        <ul>
+          {% for classroom in classrooms %}
+          <li>
+            Room: {{ classroom.room_number }} - Total Students:
+            {{classroom.total_student }}
+            <button>Edit</button>
+          </li>
+          {% endfor %}
+        </ul>
+        {% else %}
+        <p>There are no classrooms assigned.</p>
+        {% endif %}
+
+        <h3>Add a New Classroom</h3>
+        <form method="POST" action="{% url 'base' %}">
+          {% csrf_token %}
+          <label for="room_number">Room Number:</label>
+          <input type="text" name="room_number" id="room_number" required />
+
+          <label for="total_student">Total Students:</label>
+          <input
+            type="number"
+            name="total_student"
+            id="total_student"
+            required
+          />
+
+          <button type="submit">Add Classroom</button>
+        </form>
+      </div>
+    </div>
+
+    {% if students %}
+    <h2>Students</h2>
+    <ul>
+      {% for student in students %}
+      <li>
+        Student name: {{ student.s_name}} - Student's age: {{
+        student.class_enrolled }}
+      </li>
+      <button>ADD</button>
+
+      {% endfor %}
+    </ul>
+    {% else %}
+    <p>There are no students.</p>
+    {% endif %} {% if subjects %}
+    <h2>Subjects</h2>
+    <ul>
+      {% for subject in subjects %}
+      <li>
+        Subject code: {{ subject.sub_code }} - Subject name: {{ subject.sub_name
+        }} - Subject Teacher: {{subject.teacher_name}}
+      </li>
+      {% endfor %}
+    </ul>
+    {% else %}
+    <p>There are no subjects</p>
+    {% endif %}
   </body>
 </html>

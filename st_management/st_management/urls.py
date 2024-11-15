@@ -24,7 +24,9 @@ urlpatterns = [
     path('register/', views.register_page, name='register'),
     path('login/', views.login_page, name = 'login'),
     path('base/', views.base, name = 'base'),
+    # path('delete_note/', delete_classroom, name='delete_classroom'),
 
-    # path('login/' , login_page, name='login'),
-    # path('register/', register_page, name='register'),
+    # path('delete_note/<int:classroom:room_number>/', delete_classroom, name='delete_classroom'),
+    # path('editor/', views.editor, name = 'editor'),
+
 ]
