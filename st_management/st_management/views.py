@@ -1,43 +1,17 @@
-from django.urls import reverse
 from user.models import User
 from classroom.models import Classroom
 from student.models import Student
 from subject.models import Subject
 from teacher.models import Teacher
 from django.contrib.auth import get_user_model
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate
 from django.contrib import messages
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
+from student.forms import StudentForm
 
 User = get_user_model()
-
-# base page
-@login_required(login_url='/login/')
-def base(request):
-    users = User.objects.all()
-    classrooms = Classroom.objects.all()
-    students = Student.objects.all()
-    teachers = Teacher.objects.all()
-    subjects = Subject.objects.all()
-    context = {
-        'users': users,
-        'classrooms': classrooms,
-        'students' : students,
-        'subjects' :subjects,
-        'teachers' :teachers
-    }
-
-    if request.method == 'POST':
-        room_number = request.POST.get('room_number')
-        total_student = request.POST.get('total_student')
-        new_classroom = Classroom(room_number=room_number, total_student=total_student)
-        new_classroom.save()
-        return redirect('/base/') 
-
-
-    return render(request, "base.html",context)
 
 # registration page
 def register_page(request):
@@ -84,14 +58,76 @@ def login_page(request):
             return redirect('/login/')
     return render(request, "login.html")
 
-
 @login_required(login_url='/login/')
-def delete_classroom(request, room_number):
-    classroom = Classroom.objects.get(pk = room_number)
-    classroom.delete()
- 
-    return redirect('/?room_number=0')
+
+def base(request):
+    show_button = request.path != '/base'
+    return render(request, "base.html",{'show_button': show_button})
+
+# for classroom view and create
+def classroom_view(request):
+    classrooms = Classroom.objects.all()
+    context = {       
+        'classrooms': classrooms,
+    }
+    if request.method == 'POST':
+        room_number = request.POST.get('room_number')
+        total_student = request.POST.get('total_student')
+        new_classroom = Classroom(room_number=room_number, total_student=total_student)
+        new_classroom.save()
+        return redirect('/classroom/') 
+    return render(request, "classroom.html",context)
+# Update
+def classroom_edit(request, room_number):
+    classroom = get_object_or_404(Classroom, room_number=room_number)    
+    if request.method == 'POST':
+        room_number = request.POST.get('room_number')
+        total_student = request.POST.get('total_student')
+        classroom.total_student = total_student
+        classroom.save()
+        return redirect('/classroom/')
+    context = {'classroom': classroom}
+    return render(request, "classroom.html",context)
+# Delete
+def classroom_delete(request, room_number):
+        classroom = get_object_or_404(Classroom, room_number=room_number)
+        classroom.delete()
+        return redirect('classroom') 
+
+# def student_edit(request, s_id):
+#     student = Student.objects.get(s_id = s_id)
+#     form = StudentForm(request.POST, instance = student)  
+#     if form.is_valid():  
+#         form.save()  
+#         return redirect("/student")  
+#     return render(request, 'student.html', {'student': student})
+
+def student_view(request):
+    students = Student.objects.all()
+    form = StudentForm() 
+    context = {       
+        'students': students,
+        'form' : form
+    }
+    if request.method == 'POST':
+        form = StudentForm(request.POST)
+        if form.is_valid():
+            try:
+                form.save()
+                return redirect('/student/')
+            except Exception as e:
+                print(e)
+                return redirect('/student/')
+        else:
+            return redirect('/student/') 
+    return render(request, "student.html",context)
 
 
-def index(request):
-    return render(request,"index.html")
+def student_delete(request, s_id):  
+    student = Student.objects.get(s_id=s_id)  
+    student.delete()  
+    return redirect('/student/')
+
+
+    
+

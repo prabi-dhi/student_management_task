@@ -16,17 +16,18 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-# from user.views import *
 from . import views
-
+from .views import classroom_view
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('register/', views.register_page, name='register'),
     path('login/', views.login_page, name = 'login'),
     path('base/', views.base, name = 'base'),
-    # path('delete_note/', delete_classroom, name='delete_classroom'),
-
-    # path('delete_note/<int:classroom:room_number>/', delete_classroom, name='delete_classroom'),
-    # path('editor/', views.editor, name = 'editor'),
+    path('classroom/',classroom_view, name='classroom'),  
+    path('classroom/<int:room_number>/', views.classroom_edit, name='classroom_edit'),
+    path('classroom/delete/<int:room_number>/', views.classroom_delete, name='classroom_delete'),  
+    # path('student/edit/<int:s_id>/', views.student_edit, name='student_edit'),
+    path('student/', views.student_view, name='student_view'), 
+    path('student/delete/<int:s_id>/', views.student_delete, name='student_delete'),
 
 ]

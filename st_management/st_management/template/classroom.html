@@ -1,0 +1,56 @@
+{% extends 'base.html' %} {% block classroom %}
+
+<div class = "container">
+  {% if classrooms %}
+  <h2>Classrooms</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Room Number</th>
+        <th>Total students</th>
+       <th></th>
+        <th>Delete</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for classroom in classrooms %}
+      <tr>
+        <td>{{ classroom.room_number }}</td>     
+        <td><form method="POST" action="{% url 'classroom_edit' room_number=classroom.room_number%}">
+          {% csrf_token %}
+          <input type="number" name="total_student" value="{{ classroom.total_student }}" required />
+          <button type="submit">Save</button>
+          </form>
+          </td>
+          <td></td>
+          <td><form action="{% url 'classroom_delete' room_number=classroom.room_number %}" method="POST">
+            {% csrf_token %}
+            <button type="submit">Delete</button>
+        </form>
+        </td>
+      </tr>
+
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p>There are no classrooms assigned.</p>
+  {% endif %}
+  
+  <h3>Add a New Classroom</h3>
+  <form method="POST" action="{% url 'classroom' %}">
+    {% csrf_token %}
+    <label for="room_number">Room Number:</label>
+    <input type="text" name="room_number"  required /><br><br>
+
+    <label for="total_student">Total Students:</label>
+    <input type="number" name="total_student" required /><br><br>
+
+    <button type="submit">Add Classroom</button>
+  </form>
+
+</div>
+
+
+
+{% endblock %}
