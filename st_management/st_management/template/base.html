@@ -3,16 +3,18 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link
+    <!-- <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
       rel="stylesheet"
       integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
       crossorigin="anonymous"
-    />
+    /> -->
+    <!-- {% load static %}
+    <link rel="stylesheet" href="{% static 'style.css' %}"> -->
     <title>Student Management</title>
   </head>
   <body></br></br>
-    <div class="container">
+    <div>
       <h1>Welcome!</h1>
       <div>
       {% block classroom %} {% if show_button %}
@@ -24,6 +26,20 @@
         <button>See Students</button>
       </a>
       {% endif %} {% endblock %}
+      {%block teacher%}
+      {% if show_button %}
+      <a href="/teacher">
+        <button>See teachers</button>
+      </a>
+      {% endif %}
+      {%endblock%}
+      {%block subject%}
+      {% if show_button%}
+      <a href ="/subject">
+        <button>See subjects</button>
+      </a>
+      {%endif%}
+      {%endblock%}
       </div>
     </div>
   </body>

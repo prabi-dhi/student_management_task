@@ -1,0 +1,43 @@
+{%extends 'base.html'%}{%block subject%}
+<h1>Subjects</h1>
+<table>
+    <thead>
+        <tr>
+            <th>Code</th>
+            <th>Subject Name</th>
+            <th>Teacher</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for subject in subjects%}
+        <tr>
+            <td>{{subject.sub_code}}</td>
+            <td>{{subject.sub_name}}</td>
+            <td>{{subject.teacher_name}}</td>
+            <td><a href ="/subject/edit/{{subject.sub_code}}"> Edit </a></td>
+            <td><a href ="/subject/delete/{{subject.sub_code}}"> Delete </a></td>
+        </tr>
+        {%endfor%}
+    </tbody>
+</table>
+{%if edit_form%}
+<h1>Update</h1>
+
+<div>
+    <form method="POST" action="{% url 'subject_edit' edit_instance.sub_code %}">
+      {% csrf_token %}
+      {{ edit_form.as_p}}
+      <button type="submit">Submit</button>
+    </form>
+    </div>
+{%else%}
+<h1>ADD NEW</h1>
+<div>
+    <form method="POST" action="{% url 'subject_view' %}">
+      {% csrf_token %}
+      {{ form.as_p}}
+      <button type="submit">Submit</button>
+    </form>
+    </div>
+{%endif%}
+{%endblock%}

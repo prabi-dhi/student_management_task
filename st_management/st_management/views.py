@@ -10,6 +10,8 @@ from django.contrib import messages
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from student.forms import StudentForm
+from teacher.forms import TeacherForm
+from subject.forms import SubjectForm
 
 User = get_user_model()
 
@@ -59,14 +61,13 @@ def login_page(request):
     return render(request, "login.html")
 
 @login_required(login_url='/login/')
-
 def base(request):
     show_button = request.path != '/base'
     return render(request, "base.html",{'show_button': show_button})
 
-# for classroom view and create
-def classroom_view(request):
-    classrooms = Classroom.objects.all()
+# for classroom
+def classroom_view(request):   #add
+    classrooms = Classroom.objects.filter(is_deleted = False)
     context = {       
         'classrooms': classrooms,
     }
@@ -77,11 +78,10 @@ def classroom_view(request):
         new_classroom.save()
         return redirect('/classroom/') 
     return render(request, "classroom.html",context)
-# Update
+#update
 def classroom_edit(request, room_number):
-    classroom = get_object_or_404(Classroom, room_number=room_number)    
+    classroom = Classroom.objects.filter(room_number= room_number, is_deleted = False)
     if request.method == 'POST':
-        room_number = request.POST.get('room_number')
         total_student = request.POST.get('total_student')
         classroom.total_student = total_student
         classroom.save()
@@ -90,20 +90,13 @@ def classroom_edit(request, room_number):
     return render(request, "classroom.html",context)
 # Delete
 def classroom_delete(request, room_number):
-        classroom = get_object_or_404(Classroom, room_number=room_number)
-        classroom.delete()
+        classroom = Classroom.objects.get( room_number=room_number)
+        classroom.is_deleted= True
+        classroom.save()
         return redirect('classroom') 
 
-# def student_edit(request, s_id):
-#     student = Student.objects.get(s_id = s_id)
-#     form = StudentForm(request.POST, instance = student)  
-#     if form.is_valid():  
-#         form.save()  
-#         return redirect("/student")  
-#     return render(request, 'student.html', {'student': student})
-
 def student_view(request):
-    students = Student.objects.all()
+    students = Student.objects.filter(is_deleted = False)
     form = StudentForm() 
     context = {       
         'students': students,
@@ -112,22 +105,100 @@ def student_view(request):
     if request.method == 'POST':
         form = StudentForm(request.POST)
         if form.is_valid():
-            try:
-                form.save()
-                return redirect('/student/')
-            except Exception as e:
-                print(e)
-                return redirect('/student/')
-        else:
-            return redirect('/student/') 
+            form.save()
+            return redirect('/student/')
     return render(request, "student.html",context)
 
-
 def student_delete(request, s_id):  
-    student = Student.objects.get(s_id=s_id)  
-    student.delete()  
+    student = Student.objects.get(s_id=s_id, is_deleted = False)  
+    student.is_deleted = True
+    student.save()
     return redirect('/student/')
 
+def student_edit(request, s_id):
+    instance = Student.objects.get(s_id = s_id, is_deleted=False)
+    edit_form = StudentForm(request.POST or None, instance=instance)
+    if edit_form.is_valid():
+        edit_form.save()
+        return redirect('/student/')  
+    add_form = StudentForm()
 
+    context = {
+               'edit_form': edit_form,
+               'form':add_form,
+               'edit_instance':instance}
+    return render(request, 'student.html',context)
+
+def teacher_view(request):
+    teachers = Teacher.objects.filter(is_deleted=False)
+    form = TeacherForm() 
+    context = {       
+        'teachers': teachers,
+        'form' : form
+    }
+    if request.method == 'POST':
+        form = TeacherForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('/teacher/') 
+    return render(request,'teacher.html',context)
+
+def teacher_edit(request, id):
+    instance = Teacher.objects.get(id=id, is_deleted=False)
+    edit_form = TeacherForm(request.POST or None, instance=instance)
+
+    if edit_form.is_valid():
+        edit_form.save()
+        return redirect('/teacher/')
+
+    add_form = TeacherForm()
+    context = {
+        'form': add_form, 
+        'edit_form': edit_form, 
+        'edit_instance': instance,  
+    }
+    return render(request, 'teacher.html', context)
+
+def teacher_delete(request,id):  
+    teacher = Teacher.objects.get(id=id)  
+    teacher.is_deleted = True
+    teacher.save() 
+    return redirect('/teacher/')
     
+def subject_view(request):
+    subjects = Subject.objects.filter(is_deleted=False)
+    form = SubjectForm() 
+    context = {       
+        'subjects': subjects,
+        'form' : form
+    }
+    if request.method == 'POST':
+        form = SubjectForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('/subject/') 
+    return render(request,'subject.html',context)
+
+def subject_edit(request, sub_code):
+    instance= Subject.objects.get(sub_code=sub_code,is_deleted=False)
+    edit_form = SubjectForm(request.POST or None, instance=instance)
+    if edit_form.is_valid():
+        edit_form.save()
+        return redirect('/subject/')
+    add_form = SubjectForm()
+    context = {
+        # 'subject':subject,
+        'form': add_form,
+        'edit_form': edit_form,
+        'edit_instance': instance,         
+    }
+    return render(request, 'subject.html', context)
+
+def subject_delete(request, sub_code):
+    subject = Subject.objects.get(sub_code=sub_code)
+    subject.is_deleted = True
+    subject.save()
+    return redirect('/subject/')
+
+
 

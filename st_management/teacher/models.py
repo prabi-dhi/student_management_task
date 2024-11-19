@@ -6,6 +6,7 @@ class Teacher(models.Model):
     name = models.TextField(max_length = 50)
     department = models.TextField(max_length = 50)
     class_assigned = models.OneToOneField(Classroom, on_delete=models.CASCADE)
+    is_deleted = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name

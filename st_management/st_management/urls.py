@@ -26,8 +26,16 @@ urlpatterns = [
     path('classroom/',classroom_view, name='classroom'),  
     path('classroom/<int:room_number>/', views.classroom_edit, name='classroom_edit'),
     path('classroom/delete/<int:room_number>/', views.classroom_delete, name='classroom_delete'),  
-    # path('student/edit/<int:s_id>/', views.student_edit, name='student_edit'),
+    
     path('student/', views.student_view, name='student_view'), 
+    path('student_edit/<int:s_id>/', views.student_edit, name='student_edit'),
     path('student/delete/<int:s_id>/', views.student_delete, name='student_delete'),
 
+    path('teacher/', views.teacher_view, name='teacher_view'),
+    path('teacher_edit/<int:id>/', views.teacher_edit, name='teacher_edit'),
+    path('teacher/delete/<int:id>/', views.teacher_delete, name='teacher_delete'),
+
+    path('subject/', views.subject_view, name='subject_view'),
+    path('subject/edit/<int:sub_code>/', views.subject_edit, name = 'subject_edit'),
+    path('subject/delete/<int:sub_code>/', views.subject_delete, name= 'subject_delete')
 ]
