@@ -19,10 +19,14 @@ from django.urls import path
 from . import views
 from .views import classroom_view
 urlpatterns = [
+
+    path('', views.base, name = 'base'),
+
     path('admin/', admin.site.urls),
     path('register/', views.register_page, name='register'),
     path('login/', views.login_page, name = 'login'),
-    path('base/', views.base, name = 'base'),
+    path('custom_logout/' ,views.custom_logout, name='logout'),
+
     path('classroom/',classroom_view, name='classroom'),  
     path('classroom/<int:room_number>/', views.classroom_edit, name='classroom_edit'),
     path('classroom/delete/<int:room_number>/', views.classroom_delete, name='classroom_delete'),  

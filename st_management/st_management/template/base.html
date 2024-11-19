@@ -15,7 +15,9 @@
   </head>
   <body></br></br>
     <div>
-      <h1>Welcome!</h1>
+      <h1>Welcome "{{user.username}}"</h1>
+      <a href="{% url 'logout' %}"><button>Log Out</button></a></div></br>
+
       <div>
       {% block classroom %} {% if show_button %}
       <a href="/classroom">
@@ -23,13 +25,13 @@
       </a></br></br>
       {% endif %} {% endblock %} {% block student %} {% if show_button %}
       <a href="/student">
-        <button>See Students</button>
+        <button>See Students</button></br></br>
       </a>
       {% endif %} {% endblock %}
       {%block teacher%}
       {% if show_button %}
       <a href="/teacher">
-        <button>See teachers</button>
+        <button>See teachers</button></a></div></br>
       </a>
       {% endif %}
       {%endblock%}
@@ -42,5 +44,6 @@
       {%endblock%}
       </div>
     </div>
+
   </body>
 </html>

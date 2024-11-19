@@ -4,7 +4,7 @@ from student.models import Student
 from subject.models import Subject
 from teacher.models import Teacher
 from django.contrib.auth import get_user_model
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate
 from django.contrib import messages
 from django.contrib.auth import logout
@@ -44,7 +44,6 @@ def login_page(request):
         try:
             username = request.POST.get('username')
             password = request.POST.get('password')
-            # usertype= request.POST.get('usertype')
             user_obj = User.objects.filter(username=username)
             if not user_obj.exists():
                 messages.error(request, "Username not found")
@@ -52,7 +51,7 @@ def login_page(request):
             user_obj = authenticate(username=username, password=password)
             if user_obj:
                 login(request, user_obj)
-                return redirect('/base')
+                return redirect('/')
             messages.error(request, "Wrong Password")
             return redirect('/login/')
         except Exception as e:
@@ -63,9 +62,11 @@ def login_page(request):
 @login_required(login_url='/login/')
 def base(request):
     show_button = request.path != '/base'
-    return render(request, "base.html",{'show_button': show_button})
+    context = {'show_button': show_button}
+    return render(request, "base.html",context)
 
 # for classroom
+@login_required(login_url='/login/')
 def classroom_view(request):   #add
     classrooms = Classroom.objects.filter(is_deleted = False)
     context = {       
@@ -79,8 +80,10 @@ def classroom_view(request):   #add
         return redirect('/classroom/') 
     return render(request, "classroom.html",context)
 #update
+@login_required(login_url='/login/')
+
 def classroom_edit(request, room_number):
-    classroom = Classroom.objects.filter(room_number= room_number, is_deleted = False)
+    classroom = Classroom.objects.get(room_number= room_number, is_deleted = False)
     if request.method == 'POST':
         total_student = request.POST.get('total_student')
         classroom.total_student = total_student
@@ -89,12 +92,16 @@ def classroom_edit(request, room_number):
     context = {'classroom': classroom}
     return render(request, "classroom.html",context)
 # Delete
+@login_required(login_url='/login/')
+
 def classroom_delete(request, room_number):
         classroom = Classroom.objects.get( room_number=room_number)
         classroom.is_deleted= True
         classroom.save()
         return redirect('classroom') 
 
+# For student
+@login_required(login_url='/login/')
 def student_view(request):
     students = Student.objects.filter(is_deleted = False)
     form = StudentForm() 
@@ -108,13 +115,13 @@ def student_view(request):
             form.save()
             return redirect('/student/')
     return render(request, "student.html",context)
-
+@login_required(login_url='/login/')
 def student_delete(request, s_id):  
     student = Student.objects.get(s_id=s_id, is_deleted = False)  
     student.is_deleted = True
     student.save()
     return redirect('/student/')
-
+@login_required(login_url='/login/')
 def student_edit(request, s_id):
     instance = Student.objects.get(s_id = s_id, is_deleted=False)
     edit_form = StudentForm(request.POST or None, instance=instance)
@@ -129,6 +136,8 @@ def student_edit(request, s_id):
                'edit_instance':instance}
     return render(request, 'student.html',context)
 
+# For teacher
+@login_required(login_url='/login/')
 def teacher_view(request):
     teachers = Teacher.objects.filter(is_deleted=False)
     form = TeacherForm() 
@@ -142,7 +151,7 @@ def teacher_view(request):
             form.save()
             return redirect('/teacher/') 
     return render(request,'teacher.html',context)
-
+@login_required(login_url='/login/')
 def teacher_edit(request, id):
     instance = Teacher.objects.get(id=id, is_deleted=False)
     edit_form = TeacherForm(request.POST or None, instance=instance)
@@ -158,13 +167,15 @@ def teacher_edit(request, id):
         'edit_instance': instance,  
     }
     return render(request, 'teacher.html', context)
-
+@login_required(login_url='/login/')
 def teacher_delete(request,id):  
     teacher = Teacher.objects.get(id=id)  
     teacher.is_deleted = True
     teacher.save() 
     return redirect('/teacher/')
-    
+
+# For subject  
+@login_required(login_url='/login/')  
 def subject_view(request):
     subjects = Subject.objects.filter(is_deleted=False)
     form = SubjectForm() 
@@ -178,7 +189,7 @@ def subject_view(request):
             form.save()
             return redirect('/subject/') 
     return render(request,'subject.html',context)
-
+@login_required(login_url='/login/')
 def subject_edit(request, sub_code):
     instance= Subject.objects.get(sub_code=sub_code,is_deleted=False)
     edit_form = SubjectForm(request.POST or None, instance=instance)
@@ -187,18 +198,20 @@ def subject_edit(request, sub_code):
         return redirect('/subject/')
     add_form = SubjectForm()
     context = {
-        # 'subject':subject,
         'form': add_form,
         'edit_form': edit_form,
         'edit_instance': instance,         
     }
     return render(request, 'subject.html', context)
 
+@login_required(login_url='/login/')
 def subject_delete(request, sub_code):
     subject = Subject.objects.get(sub_code=sub_code)
     subject.is_deleted = True
     subject.save()
     return redirect('/subject/')
 
-
+def custom_logout(request):
+    logout(request)    
+    return redirect('login')
 
